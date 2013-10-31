@@ -28,7 +28,7 @@ public class ColorIdentifier {
 	public static void main(String[] args) {
 		ColorIdentifier colorIdentifier = new ColorIdentifier();
 		FeatureVector unknown = new FeatureVector();
-		unknown.addFeature(new entities.Color("Color",colorIdentifier.getAverageRGB(new File("images/colors/unclassified/maroon.jpg"))));
+		unknown.addFeature(new entities.Color("Color",colorIdentifier.getAverageRGB(new File("images/colors/unclassified/lightgreen.jpg"))));
 		UnclassifiedObject u = new UnclassifiedObject(unknown);
 		ListIterator<ClassifiedObject> KNearestNeighbors = colorIdentifier.KNNClassifier.classify(u);
 		System.out.println("The most similar colors are:");
