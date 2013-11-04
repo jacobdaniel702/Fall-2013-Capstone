@@ -9,7 +9,7 @@ public class GaussianFilter {
 	public GaussianFilter(){
 		width = 5;
 		height = 5;
-		coefficient = 1/159;
+		coefficient = 1.0/159.0;
 		kernal = new int[5][5];
 		populate();
 	}
