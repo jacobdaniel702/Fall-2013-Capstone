@@ -18,20 +18,20 @@ public class EdgeDetector {
 		EdgeDetector detector = new EdgeDetector();
 		BufferedImage img = null;
 		try{
-			img = ImageIO.read(new File("images/objects/apple.jpg"));
+			img = ImageIO.read(new File("images/objects/face.bmp"));
 		}
 		catch(IOException e){}
 		
 		CannyEdgeDetector canny = new CannyEdgeDetector(img);
 		BufferedImage blur = canny.getBlurredImage();
 		
-		try{
-			File outputFile = new File("images/objects/blurredApple.jpg");
-			ImageIO.write(blur,"jpg",outputFile);
-		}
-		catch(IOException e){
-			e.printStackTrace();
-		}
+//		try{
+//			File outputFile = new File("images/objects/blurredApple.jpg");
+//			ImageIO.write(blur,"jpg",outputFile);
+//		}
+//		catch(IOException e){
+//			e.printStackTrace();
+//		}
 	}
 	
 	private BufferedImage convertToGrayScale(BufferedImage color){
