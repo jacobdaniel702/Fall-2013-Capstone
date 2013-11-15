@@ -31,15 +31,15 @@ public class SobelFilter {
 	}
 	
 	private void populate(){
-		horizontalKernal[0][0] = 1;
+		horizontalKernal[0][0] = -1;
 		horizontalKernal[0][1] = 0;
-		horizontalKernal[0][2] = -1;
-		horizontalKernal[1][0] = 2;
+		horizontalKernal[0][2] = 1;
+		horizontalKernal[1][0] = -2;
 		horizontalKernal[1][1] = 0;
-		horizontalKernal[1][2] = -2;
-		horizontalKernal[2][0] = 1;
+		horizontalKernal[1][2] = 2;
+		horizontalKernal[2][0] = -1;
 		horizontalKernal[2][1] = 0;
-		horizontalKernal[2][2] = -1;
+		horizontalKernal[2][2] = 1;
 		
 		verticalKernal[0][0] = 1;
 		verticalKernal[0][1] = 2;

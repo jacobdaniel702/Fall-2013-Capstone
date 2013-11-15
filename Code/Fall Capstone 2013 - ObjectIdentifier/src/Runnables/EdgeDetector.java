@@ -1,6 +1,5 @@
 package Runnables;
 
-import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -15,31 +14,41 @@ public class EdgeDetector {
 	}
 	
 	public static void main(String[] args){
-		EdgeDetector detector = new EdgeDetector();
-		BufferedImage img = null;
+		BufferedImage apple = null, car = null, computer = null, face = null, orange = null;
 		try{
-			img = ImageIO.read(new File("images/objects/face.bmp"));
+			apple = ImageIO.read(new File("images/objects/apple.jpg"));
+			car = ImageIO.read(new File("images/objects/car.jpg"));
+			computer = ImageIO.read(new File("images/objects/computer.jpg"));
+			face = ImageIO.read(new File("images/objects/face.jpg"));
+			orange = ImageIO.read(new File("images/objects/orange.jpg"));
 		}
 		catch(IOException e){}
 		
-		CannyEdgeDetector canny = new CannyEdgeDetector(img);
-		BufferedImage blur = canny.getBlurredImage();
+		CannyEdgeDetector canny = new CannyEdgeDetector();
+		BufferedImage appleEdges = canny.processImage(apple);
+		BufferedImage carEdges = canny.processImage(car);
+		BufferedImage computerEdges = canny.processImage(computer);
+		BufferedImage faceEdges = canny.processImage(face);
+		BufferedImage orangeEdges = canny.processImage(orange);
 		
-//		try{
-//			File outputFile = new File("images/objects/blurredApple.jpg");
-//			ImageIO.write(blur,"jpg",outputFile);
-//		}
-//		catch(IOException e){
-//			e.printStackTrace();
-//		}
-	}
-	
-	private BufferedImage convertToGrayScale(BufferedImage color){
-		BufferedImage grayscale = new BufferedImage(color.getWidth(),color.getHeight(),
-				BufferedImage.TYPE_BYTE_GRAY);
-		Graphics g = grayscale.getGraphics();
-		g.drawImage(color,0,0,null);
-		g.dispose();
-		return grayscale;
+		try{
+			File appleFile = new File("images/edges/apple.jpg");
+			ImageIO.write(appleEdges,"jpg",appleFile);
+			
+			File carFile = new File("images/edges/car.jpg");
+			ImageIO.write(carEdges,"jpg",carFile);
+
+			File computerFile = new File("images/edges/computer.jpg");
+			ImageIO.write(computerEdges,"jpg",computerFile);
+			
+			File faceFile = new File("images/edges/face.jpg");
+			ImageIO.write(faceEdges,"jpg",faceFile);
+			
+			File orangeFile = new File("images/edges/orange.jpg");
+			ImageIO.write(orangeEdges,"jpg",orangeFile);
+		}
+		catch(IOException e){
+			e.printStackTrace();
+		}
 	}
 }
