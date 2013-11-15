@@ -4,6 +4,7 @@ import java.awt.Color;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
+import java.util.ArrayList;
 
 public class CannyEdgeDetector {
 
@@ -15,8 +16,8 @@ public class CannyEdgeDetector {
 	private double[][] gradientAngle;
 	private double[][] hysteresisImage;
 	private BufferedImage edgeImage;
-	private final double LOWHYSTERESISTHRESHOLD = 20;
-	private final double HIGHHYSTERESISTHRESHOLD = 80;
+	private double LOWHYSTERESISTHRESHOLD;
+	private double HIGHHYSTERESISTHRESHOLD;
 	
 	public CannyEdgeDetector(){
 		gaussFilter = new GaussianFilter();
@@ -25,6 +26,9 @@ public class CannyEdgeDetector {
 	
 	public BufferedImage processImage(BufferedImage img){
 		initialImage = img;
+		double meanPixelValue = calculateMeanPixelValue();
+		LOWHYSTERESISTHRESHOLD = .5*meanPixelValue;
+		HIGHHYSTERESISTHRESHOLD = .8*meanPixelValue;
 		blurImage = new BufferedImage(img.getWidth(),img.getHeight(), BufferedImage.TYPE_BYTE_GRAY);
 		gradientMagnitude = new double[blurImage.getHeight()][blurImage.getWidth()];
 		gradientAngle = new double[blurImage.getHeight()][blurImage.getWidth()];
@@ -36,6 +40,18 @@ public class CannyEdgeDetector {
 		applyHysteresisThresholding();
 		
 		return edgeImage;
+	}
+	
+	private double calculateMeanPixelValue(){
+		double sum = 0.0;
+		
+		for(int i = 0; i < initialImage.getHeight(); i++){
+			for(int j = 0; j < initialImage.getWidth(); j++){
+				sum+=convertToGrayScale(new Color(initialImage.getRGB(i, j)));
+			}
+		}
+		
+		return sum/(1.0*initialImage.getHeight()*initialImage.getWidth());
 	}
 	
 	private void applyGaussFilter(){		
