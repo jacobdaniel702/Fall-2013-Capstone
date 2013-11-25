@@ -1,7 +1,5 @@
 package entities;
 
-import java.awt.Point;
-
 public class Vector {
 	private double magnitude;
 	private double direction;
@@ -17,5 +15,13 @@ public class Vector {
 	
 	public double getDirection(){
 		return direction;
+	}
+	
+	public double getXComponent(){
+		return magnitude*Math.cos(direction);
+	}
+	
+	public double getYComponent(){
+		return magnitude*Math.sin(direction);
 	}
 }

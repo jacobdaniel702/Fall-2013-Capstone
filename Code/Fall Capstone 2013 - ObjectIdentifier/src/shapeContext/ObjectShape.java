@@ -37,6 +37,7 @@ public class ObjectShape {
 		
 		calculatePointDistances();
 		normalizePointDistances();
+		calculatePointAngles();
 	}
 	
 	private void calculatePointDistances(){
@@ -77,14 +78,46 @@ public class ObjectShape {
 		}
 	}
 	
+	private void calculatePointAngles(){
+		while(sample.hasNext()){
+			ListIterator<Point> otherSample = sample;
+			Point p = sample.next();
+			HashMap<Point,Double> angles = new HashMap<Point,Double>();
+			while(otherSample.hasNext()){
+				Point q = otherSample.next();
+				Vector tangentVector = findAverageVector(p);
+				double anglePQ = Math.atan((q.y-p.y)/(q.x-p.x));
+				Vector pq = new Vector(pointDistances.get(p).get(q),anglePQ);
+				
+				double angle = Math.acos(((tangentVector.getXComponent()*pq.getXComponent())+
+				(tangentVector.getYComponent()+pq.getYComponent()))/
+				(tangentVector.getMagnitude()*pq.getMagnitude()));
+				
+				if(angle != 0)
+					angles.put(q, angle);
+			}
+			pointAngles.put(p, angles);
+		}
+	}
+	
 	private Vector findAverageVector(Point p){
 		ArrayList<Vector> vectors = new ArrayList<Vector>();
 		
 		for(Point q: pointDistances.get(p).keySet()){
 			double angle = Math.atan((q.y-p.y)/(q.x-p.x));
-			vectors.add(new Vector(1,angle));
+			vectors.add(new Vector(pointDistances.get(p).get(q),angle));
 		}
 		
-		//add vectors to approximate tangent vector at p
+		double xComponent = 0.0, yComponent = 0.0;
+		
+		for(Vector v: vectors){
+			xComponent += v.getMagnitude()*Math.cos(v.getDirection());
+			yComponent += v.getMagnitude()*Math.sin(v.getDirection());
+		}
+		
+		double averageMagnitude = Math.sqrt(Math.pow(xComponent, 2)+Math.pow(yComponent, 2));
+		double averageAngle = Math.atan(yComponent/xComponent);
+		
+		return new Vector(averageMagnitude,averageAngle);
 	}
 }
