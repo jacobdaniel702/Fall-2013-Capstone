@@ -45,6 +45,10 @@ public class ObjectShape {
 		createHistograms();
 	}
 	
+	public Map<Point, LogPolarHistogram> getPointHistograms(){
+		return pointHistograms;
+	}
+	
 	private void calculatePointDistances(){
 		while(sample.hasNext()){
 			ListIterator<Point> otherSample = sample;

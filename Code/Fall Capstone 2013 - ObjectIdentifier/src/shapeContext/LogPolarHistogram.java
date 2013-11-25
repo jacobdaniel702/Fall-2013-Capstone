@@ -29,4 +29,12 @@ public class LogPolarHistogram {
 			}
 		}
 	}
+	
+	public int getNumBins(){
+		return RADIALSEPARATIONS*ANGULARSEPARATIONS;
+	}
+	
+	public int getBinCount(int k){
+		return bins[k/][col].count;
+	}
 }
