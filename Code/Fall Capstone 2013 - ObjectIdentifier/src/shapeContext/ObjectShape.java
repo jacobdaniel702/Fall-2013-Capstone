@@ -18,6 +18,7 @@ public class ObjectShape {
 	private final int SAMPLESIZE = 200;
 	private Map<Point,Map<Point,Double>> pointDistances;
 	private Map<Point,Map<Point,Double>> pointAngles;
+	private Map<Point, LogPolarHistogram> pointHistograms;
 	
 	public ObjectShape(BufferedImage edges){
 		shape = new Shape();
@@ -38,6 +39,10 @@ public class ObjectShape {
 		calculatePointDistances();
 		normalizePointDistances();
 		calculatePointAngles();
+		
+		pointHistograms = new HashMap<Point, LogPolarHistogram>();
+		
+		createHistograms();
 	}
 	
 	private void calculatePointDistances(){
@@ -119,5 +124,19 @@ public class ObjectShape {
 		double averageAngle = Math.atan(yComponent/xComponent);
 		
 		return new Vector(averageMagnitude,averageAngle);
+	}
+	
+	private void createHistograms(){
+		while(sample.hasNext()){
+			Point p = sample.next();
+			LogPolarHistogram pHistogram = new LogPolarHistogram();
+			Map<Point, Double> distances = pointDistances.get(p);
+			Map<Point, Double> angles = pointAngles.get(p);
+			
+			for(Point q: distances.keySet()){
+				pHistogram.addPoint(distances.get(q), angles.get(q));
+			}
+			pointHistograms.put(p, pHistogram);
+		}
 	}
 }

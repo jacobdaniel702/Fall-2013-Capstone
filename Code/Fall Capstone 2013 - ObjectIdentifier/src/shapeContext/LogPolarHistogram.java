@@ -1,0 +1,32 @@
+package shapeContext;
+
+public class LogPolarHistogram {
+	final int RADIALSEPARATIONS = 5;
+	final int ANGULARSEPARATIONS = 12;
+	
+	private Bin[][] bins;
+	
+	public LogPolarHistogram(){
+		bins = new Bin[RADIALSEPARATIONS][ANGULARSEPARATIONS];
+		initializeBins();
+	}
+	
+	private void initializeBins(){
+		for(int i = 0; i < RADIALSEPARATIONS; i++){
+			for(int j = 0; j < ANGULARSEPARATIONS; j++){
+				bins[i][j] = new Bin(.125*Math.pow(2, i),2*(j+1)*Math.PI/ANGULARSEPARATIONS);
+			}
+		}
+	}
+	
+	public void addPoint(double r, double theta){
+		for(int i = 0; i < bins.length; i++){
+			for(int j = 0; j < bins[i].length; j++){
+				if(bins[i][j].getR() > r && bins[i][j].getTheta() > theta){
+					bins[i][j].increment();
+					return;
+				}
+			}
+		}
+	}
+}
