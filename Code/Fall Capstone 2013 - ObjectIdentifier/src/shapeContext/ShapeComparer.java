@@ -26,9 +26,13 @@ public class ShapeComparer {
 			for(Point q: knownHistograms.keySet()){
 				double totalCost = 0.0;
 				for(int k = 0; k < unknownHistograms.get(p).getNumBins(); k++){
-					totalCost += unknownHistograms.get(p).getBinCount(row, col)
+					totalCost += 
+							(Math.pow(unknownHistograms.get(p).getBinCount(k)-knownHistograms.get(q).getBinCount(k),2))/
+							(unknownHistograms.get(p).getBinCount(k)+knownHistograms.get(q).getBinCount(k));
 				}
+				costMap.put(q, .5*totalCost);
 			}
+			shapeContextCost.put(p, costMap);
 		}
 	}
 }

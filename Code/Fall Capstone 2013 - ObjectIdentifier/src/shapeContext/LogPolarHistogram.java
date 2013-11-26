@@ -35,6 +35,9 @@ public class LogPolarHistogram {
 	}
 	
 	public int getBinCount(int k){
-		return bins[k/][col].count;
+		int row = k/ANGULARSEPARATIONS;
+		int col = k%12;
+		
+		return bins[row][col].count;
 	}
 }
