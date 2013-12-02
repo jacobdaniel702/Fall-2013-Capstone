@@ -32,7 +32,8 @@ public class ObjectShape {
 			}
 		}
 		
-		sample = shape.getSample(SAMPLESIZE);
+		shape.sample(SAMPLESIZE);
+		sample = shape.getSample();
 		pointDistances = new HashMap<Point, Map<Point, Double>>();
 		pointAngles = new HashMap<Point, Map<Point, Double>>();
 		
@@ -41,7 +42,6 @@ public class ObjectShape {
 		calculatePointAngles();
 		
 		pointHistograms = new HashMap<Point, LogPolarHistogram>();
-		
 		createHistograms();
 	}
 	
@@ -51,7 +51,7 @@ public class ObjectShape {
 	
 	private void calculatePointDistances(){
 		while(sample.hasNext()){
-			ListIterator<Point> otherSample = sample;
+			ListIterator<Point> otherSample = shape.getSample();
 			Point p = sample.next();
 			HashMap<Point,Double> distances = new HashMap<Point,Double>();
 			while(otherSample.hasNext()){
@@ -88,22 +88,31 @@ public class ObjectShape {
 	}
 	
 	private void calculatePointAngles(){
+		sample = shape.getSample();
 		while(sample.hasNext()){
-			ListIterator<Point> otherSample = sample;
+			ListIterator<Point> otherSample = shape.getSample();
 			Point p = sample.next();
 			HashMap<Point,Double> angles = new HashMap<Point,Double>();
 			while(otherSample.hasNext()){
 				Point q = otherSample.next();
-				Vector tangentVector = findAverageVector(p);
-				double anglePQ = Math.atan((q.y-p.y)/(q.x-p.x));
-				Vector pq = new Vector(pointDistances.get(p).get(q),anglePQ);
-				
-				double angle = Math.acos(((tangentVector.getXComponent()*pq.getXComponent())+
-				(tangentVector.getYComponent()+pq.getYComponent()))/
-				(tangentVector.getMagnitude()*pq.getMagnitude()));
-				
-				if(angle != 0)
+				if(p.distance(q) != 0){
+					Vector tangentVector = findAverageVector(p);
+					double anglePQ = 0;
+					try{
+						anglePQ = Math.atan((q.y-p.y)/(q.x-p.x));
+					}
+					catch(ArithmeticException ae){
+						anglePQ = Math.PI/2;
+					}
+					Map<Point, Double> r = pointDistances.get(p);
+					Vector pq = new Vector(pointDistances.get(p).get(q),anglePQ);
+					
+					double angle = Math.acos(((tangentVector.getXComponent()*pq.getXComponent())+
+					(tangentVector.getYComponent()+pq.getYComponent()))/
+					(tangentVector.getMagnitude()*pq.getMagnitude()));
+					
 					angles.put(q, angle);
+				}
 			}
 			pointAngles.put(p, angles);
 		}
@@ -113,7 +122,14 @@ public class ObjectShape {
 		ArrayList<Vector> vectors = new ArrayList<Vector>();
 		
 		for(Point q: pointDistances.get(p).keySet()){
-			double angle = Math.atan((q.y-p.y)/(q.x-p.x));
+			double angle = 0;
+			try{
+				angle = Math.atan((q.y-p.y)/(q.x-p.x));
+			}
+			catch(ArithmeticException ae){
+				angle = Math.PI/2;
+			}
+			
 			vectors.add(new Vector(pointDistances.get(p).get(q),angle));
 		}
 		
@@ -131,6 +147,7 @@ public class ObjectShape {
 	}
 	
 	private void createHistograms(){
+		sample = shape.getSample();
 		while(sample.hasNext()){
 			Point p = sample.next();
 			LogPolarHistogram pHistogram = new LogPolarHistogram();
