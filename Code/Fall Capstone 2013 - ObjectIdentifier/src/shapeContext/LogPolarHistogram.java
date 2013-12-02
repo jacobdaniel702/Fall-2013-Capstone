@@ -40,4 +40,16 @@ public class LogPolarHistogram {
 		
 		return bins[row][col].count;
 	}
+	
+	public int getTotalBinCount(){
+		int count = 0;
+		
+		for(int i = 0; i < bins.length; i++){
+			for(int j = 0; j < bins[i].length; j++){
+				count += bins[i][j].getCount();
+			}
+		}
+		
+		return count;
+	}
 }
