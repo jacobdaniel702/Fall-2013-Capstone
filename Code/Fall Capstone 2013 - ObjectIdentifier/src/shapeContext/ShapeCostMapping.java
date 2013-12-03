@@ -58,11 +58,12 @@ public class ShapeCostMapping {
 				double totalCost = 0.0;
 				for(int k = 0; k < unknownHistograms.get(p).getNumBins(); k++){
 					//denominator may go to zero
-					double numerator = (Math.pow((unknownHistograms.get(p).getBinCount(k)/unknownHistograms.get(p).getTotalBinCount())-
-							(knownHistograms.get(q).getBinCount(k)/knownHistograms.get(q).getTotalBinCount()),2));
+					double numerator = (Math.pow((unknownHistograms.get(p).getBinCount(k)/(1.0*unknownHistograms.get(p).getTotalBinCount()))-
+							(knownHistograms.get(q).getBinCount(k)/(1.0*knownHistograms.get(q).getTotalBinCount())),2));
 					
-					double denominator = ((unknownHistograms.get(p).getBinCount(k)/unknownHistograms.get(p).getTotalBinCount())+
-							(knownHistograms.get(q).getBinCount(k)/knownHistograms.get(q).getTotalBinCount()));
+					double denominator = ((unknownHistograms.get(p).getBinCount(k)/(1.0*unknownHistograms.get(p).getTotalBinCount()))+
+							(knownHistograms.get(q).getBinCount(k)/(1.0*knownHistograms.get(q).getTotalBinCount())));
+					
 					
 					if(denominator != 0){
 						totalCost += (numerator/denominator);

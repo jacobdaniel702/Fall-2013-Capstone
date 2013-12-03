@@ -11,34 +11,40 @@ import shapeContext.ShapeCostMapping;
 
 public class ShapeComparer {
 	public static void main(String[] args){
-		BufferedImage apple = null, car = null, computer = null, face = null, orange = null;
+		BufferedImage apple = null, apple_rotated = null, apple_scaled = null, apple_translated = null, otherApple = null, face  =null;
 		
 		try{
 			apple = ImageIO.read(new File("images/edges/apple.jpg"));
-			car = ImageIO.read(new File("images/edges/car.jpg"));
-			computer = ImageIO.read(new File("images/edges/computer.jpg"));
+			apple_rotated = ImageIO.read(new File("images/edges/apple_rotated.jpg"));
+			apple_scaled = ImageIO.read(new File("images/edges/apple_scaled.jpg"));
+			apple_translated = ImageIO.read(new File("images/edges/apple_translated.jpg"));
+			otherApple = ImageIO.read(new File("images/edges/otherApple.jpg"));
 			face = ImageIO.read(new File("images/edges/face.jpg"));
-			orange = ImageIO.read(new File("images/edges/orange.jpg"));
 		}
 		catch(IOException e){}
 		
 		ObjectShape appleShape = new ObjectShape(apple);
-		ObjectShape carShape = new ObjectShape(car);
-//		ObjectShape computerShape = new ObjectShape(computer);
+		ObjectShape appleShape2 = new ObjectShape(apple);
+//		ObjectShape apple_rotatedShape = new ObjectShape(apple_rotated);
+//		ObjectShape apple_scaledShape = new ObjectShape(apple_scaled);
+//		ObjectShape apple_translatedShape = new ObjectShape(apple_translated);
+//		ObjectShape otherAppleShape = new ObjectShape(otherApple);
 //		ObjectShape faceShape = new ObjectShape(face);
-//		ObjectShape orangeShape = new ObjectShape(orange);
 		
-//		ShapeCostMapping appleToApple = new ShapeCostMapping(appleShape, appleShape);
-		ShapeCostMapping appleToCar = new ShapeCostMapping(appleShape, carShape);
-//		ShapeCostMapping appleToComputer = new ShapeCostMapping(appleShape, computerShape);
+		ShapeCostMapping appleToApple = new ShapeCostMapping(appleShape, appleShape2);
+//		ShapeCostMapping appleToApple_Rotated = new ShapeCostMapping(appleShape, apple_rotatedShape);
+//		ShapeCostMapping appleToApple_Scaled = new ShapeCostMapping(appleShape, apple_scaledShape);
+//		ShapeCostMapping appleToApple_Translated = new ShapeCostMapping(appleShape, apple_translatedShape);
+//		ShapeCostMapping appleToOtherApple = new ShapeCostMapping(appleShape, otherAppleShape);
 //		ShapeCostMapping appleToFace = new ShapeCostMapping(appleShape, faceShape);
-//		ShapeCostMapping appleToOrange = new ShapeCostMapping(appleShape, orangeShape);
+		
 		
 		System.out.println("Cost of matching shapes(smaller is better):");
-//		System.out.println("Apple-Apple: "  + appleToApple.getTotalMatchingCost());
-		System.out.println("Apple-Car: " + appleToCar.getTotalMatchingCost());
-//		System.out.println("Apple-Computer: " + appleToComputer.getTotalMatchingCost());
+		System.out.println("Apple-Apple: "  + appleToApple.getTotalMatchingCost());
+//		System.out.println("Apple-Apple_Rotated: " + appleToApple_Rotated.getTotalMatchingCost());
+//		System.out.println("Apple-Apple_Scaled: " + appleToApple_Scaled.getTotalMatchingCost());
+//		System.out.println("Apple-Apple_Translated: " + appleToApple_Translated.getTotalMatchingCost());
+//		System.out.println("Apple-OtherApple: " + appleToOtherApple.getTotalMatchingCost());
 //		System.out.println("Apple-Face: " + appleToFace.getTotalMatchingCost());
-//		System.out.println("Apple-Orange: " + appleToOrange.getTotalMatchingCost());
 	}
 }

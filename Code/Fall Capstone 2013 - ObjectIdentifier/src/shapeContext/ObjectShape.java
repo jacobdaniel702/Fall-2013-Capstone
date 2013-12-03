@@ -15,7 +15,7 @@ public class ObjectShape {
 
 	private Shape shape;
 	private ListIterator<Point> sample;
-	private final int SAMPLESIZE = 200;
+	private final int SAMPLESIZE = 20;
 	private Map<Point,Map<Point,Double>> pointDistances;
 	private Map<Point,Map<Point,Double>> pointAngles;
 	private Map<Point, LogPolarHistogram> pointHistograms;
