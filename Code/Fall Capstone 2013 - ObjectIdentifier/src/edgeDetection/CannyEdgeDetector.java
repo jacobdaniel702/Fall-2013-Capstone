@@ -27,7 +27,7 @@ public class CannyEdgeDetector {
 	public BufferedImage processImage(BufferedImage img){
 		initialImage = img;
 		double meanPixelValue = calculateMeanPixelValue();
-		HIGHHYSTERESISTHRESHOLD = .4*meanPixelValue;
+		HIGHHYSTERESISTHRESHOLD = .6*meanPixelValue;
 		LOWHYSTERESISTHRESHOLD = .7*HIGHHYSTERESISTHRESHOLD;
 		blurImage = new BufferedImage(img.getWidth(),img.getHeight(), BufferedImage.TYPE_BYTE_GRAY);
 		gradientMagnitude = new double[blurImage.getHeight()][blurImage.getWidth()];

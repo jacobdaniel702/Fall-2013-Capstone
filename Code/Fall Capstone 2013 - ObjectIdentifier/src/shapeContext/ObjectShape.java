@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.ListIterator;
 import java.util.Map;
 
+import entities.Classification;
 import entities.Shape;
 import entities.Vector;
 
@@ -15,10 +16,11 @@ public class ObjectShape {
 
 	private Shape shape;
 	private ListIterator<Point> sample;
-	private final int SAMPLESIZE = 20;
+	private final int SAMPLESIZE = 350;
 	private Map<Point,Map<Point,Double>> pointDistances;
 	private Map<Point,Map<Point,Double>> pointAngles;
 	private Map<Point, LogPolarHistogram> pointHistograms;
+	private Classification classification;
 	
 	public ObjectShape(BufferedImage edges){
 		shape = new Shape();
@@ -43,6 +45,14 @@ public class ObjectShape {
 		
 		pointHistograms = new HashMap<Point, LogPolarHistogram>();
 		createHistograms();
+	}
+	
+	public void setClassification(Classification classification){
+		this.classification = classification;
+	}
+	
+	public Classification getClassification(){
+		return classification;
 	}
 	
 	public Map<Point, LogPolarHistogram> getPointHistograms(){

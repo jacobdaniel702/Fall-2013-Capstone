@@ -22,20 +22,20 @@ public class ColorIdentifier {
 	public ColorIdentifier(){
 		this.trainingSet = new TrainingSet();
 		populateTrainingData();
-		this.KNNClassifier = new KNearestNeighbor(trainingSet);
+		//this.KNNClassifier = new KNearestNeighbor(trainingSet);
 	}
 	
 	public static void main(String[] args) {
-		ColorIdentifier colorIdentifier = new ColorIdentifier();
-		FeatureVector unknown = new FeatureVector();
-		unknown.addFeature(new entities.Color("Color",colorIdentifier.getAverageRGB(new File("images/colors/unclassified/lightgreen.jpg"))));
-		UnclassifiedObject u = new UnclassifiedObject(unknown);
-		ListIterator<ClassifiedObject> KNearestNeighbors = colorIdentifier.KNNClassifier.classify(u);
-		System.out.println("The most similar colors are:");
-		while(KNearestNeighbors.hasNext()){
-			ClassifiedObject c = KNearestNeighbors.next();
-			System.out.println("Color: " + c.getClassification().getName() + "\tDistance: " + colorIdentifier.KNNClassifier.getDistanceBetweenObjects(c, u));
-		}
+//		ColorIdentifier colorIdentifier = new ColorIdentifier();
+//		FeatureVector unknown = new FeatureVector();
+//		unknown.addFeature(new entities.Color("Color",colorIdentifier.getAverageRGB(new File("images/colors/unclassified/lightgreen.jpg"))));
+//		UnclassifiedObject u = new UnclassifiedObject(unknown);
+//		ListIterator<ClassifiedObject> KNearestNeighbors = colorIdentifier.KNNClassifier.classify(u);
+//		System.out.println("The most similar colors are:");
+//		while(KNearestNeighbors.hasNext()){
+//			ClassifiedObject c = KNearestNeighbors.next();
+//			System.out.println("Color: " + c.getClassification().getName() + "\tDistance: " + colorIdentifier.KNNClassifier.getDistanceBetweenObjects(c, u));
+//		}
 	}
 	
 	private void populateTrainingData(){

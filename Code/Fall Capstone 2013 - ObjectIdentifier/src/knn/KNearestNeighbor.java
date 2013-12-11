@@ -1,68 +1,91 @@
 package knn;
 
-import java.util.ArrayList;
-import java.util.ListIterator;
+import java.util.HashMap;
+import java.util.Map;
 
-import entities.ClassifiedObject;
-import entities.Color;
-import entities.TrainingSet;
-import entities.UnclassifiedObject;
+import shapeContext.ObjectShape;
+import shapeContext.ShapeCostMapping;
+
+import entities.Classification;
 
 public class KNearestNeighbor {
 	static final int K = 3;
-	private TrainingSet trainingSet;
+	private ObjectShape[] trainingSet;
 	
-	public KNearestNeighbor(TrainingSet trainingSet){
+	public KNearestNeighbor(ObjectShape[] trainingSet){
 		this.trainingSet = trainingSet;
 	}
-	
-	public double getDistanceBetweenObjects(ClassifiedObject classified, UnclassifiedObject unclassified){
-		double distance = 0;
 		
-		Color classifiedFeature = (Color)classified.getFeatureVector().getFeatures().next();
-		double r1 = ((double[])classifiedFeature.getAttribute())[0];
-		double g1 = ((double[])classifiedFeature.getAttribute())[1];
-		double b1 = ((double[])classifiedFeature.getAttribute())[2];
+	public Classification classify(ObjectShape unclassified){
+		double totalMatchingCost = 0;
+		Map<ObjectShape, Double> KNearestNeighbors = new HashMap<ObjectShape, Double>();
 		
-		Color unclassifiedFeature = (Color) unclassified.getFeatureVector().getFeatures().next();
-		double r2 = ((double[])unclassifiedFeature.getAttribute())[0];
-		double g2 = ((double[])unclassifiedFeature.getAttribute())[1];
-		double b2 = ((double[])unclassifiedFeature.getAttribute())[2];
-			
-		distance = Math.sqrt(Math.pow(r1-r2, 2) + Math.pow(g1-g2, 2) + Math.pow(b1-b2, 2));
-		return distance;
-	}
-	
-	public ListIterator<ClassifiedObject> classify(UnclassifiedObject unclassified){
-		double distance = 0;
-		ArrayList<ClassifiedObject> KNearestNeighbors = new ArrayList<ClassifiedObject>();
-		ListIterator<ClassifiedObject> lt = trainingSet.getTrainingSet();
-		while(lt.hasNext()){
-			ClassifiedObject classified = lt.next();
-			distance = getDistanceBetweenObjects(classified, unclassified);
-			
+		
+		for(ObjectShape classified: trainingSet){
+			ShapeCostMapping costMapping = new ShapeCostMapping(unclassified, classified);
+			totalMatchingCost = costMapping.getTotalMatchingCost();
+			System.out.println(classified.getClassification().getName()+": " + totalMatchingCost);			
 			if(KNearestNeighbors.size() < K)
-				KNearestNeighbors.add(classified);
+				KNearestNeighbors.put(classified, totalMatchingCost);
 			else{
-				ClassifiedObject furthest = getObjectFurthestFromTarget(KNearestNeighbors, unclassified);
-				if(distance < getDistanceBetweenObjects(furthest,unclassified)){
+				ObjectShape furthest = getNeighborFurthestFromTarget(KNearestNeighbors, unclassified);
+				if(KNearestNeighbors.get(furthest) > totalMatchingCost){
 					KNearestNeighbors.remove(furthest);
-					KNearestNeighbors.add(classified);
+					KNearestNeighbors.put(classified, totalMatchingCost);
 				}
 			}	
 		}
 		
-		return KNearestNeighbors.listIterator();
+		Classification result = chooseClassification(KNearestNeighbors);
+		
+		return result;
 	}
 	
-	private ClassifiedObject getObjectFurthestFromTarget(ArrayList<ClassifiedObject> neighbors, UnclassifiedObject target){
-		ClassifiedObject furthest = neighbors.get(0);
+	private ObjectShape getNeighborFurthestFromTarget(Map<ObjectShape, Double> neighbors, ObjectShape target){
+		ObjectShape furthest = neighbors.keySet().iterator().next();
 		
-		for(int i = 1; i < neighbors.size(); i++){
-			if(getDistanceBetweenObjects(neighbors.get(i),target) > getDistanceBetweenObjects(furthest,target))
-				furthest = neighbors.get(i);
+		for(ObjectShape neighbor: neighbors.keySet()){
+			if(neighbors.get(neighbor) > neighbors.get(furthest)){
+				furthest = neighbor;
+			}
 		}
 		
 		return furthest;
+	}
+	
+	private Classification chooseClassification(Map<ObjectShape, Double> neighbors){
+		System.out.println("Neighbors: ");
+		Map<String, Integer> classCount = new HashMap<String, Integer>();
+		
+		for(ObjectShape neighbor: neighbors.keySet()){
+			System.out.println(neighbor.getClassification().getName());
+			if(classCount.containsKey(neighbor.getClassification().getName())){
+				int count = classCount.get(neighbor.getClassification().getName());
+				classCount.put(neighbor.getClassification().getName(), count+1);
+			}
+			else classCount.put(neighbor.getClassification().getName(), 1);
+		}
+		
+		double closestCost = Double.MAX_VALUE;
+		Classification maxInstance = null;
+		
+		for(ObjectShape neighbor: neighbors.keySet()){
+			if(neighbors.get(neighbor) < closestCost){
+				closestCost = neighbors.get(neighbor);
+				maxInstance = neighbor.getClassification();
+			}
+		}
+		
+		int maxOccurrance = classCount.get(maxInstance.getName());
+		
+		for(String s: classCount.keySet()){
+			System.out.println(classCount.get(s));
+			if(classCount.get(s) > maxOccurrance){
+				maxOccurrance = classCount.get(s);
+				maxInstance = new Classification(s);
+			}
+		}
+		
+		return maxInstance;
 	}
 }

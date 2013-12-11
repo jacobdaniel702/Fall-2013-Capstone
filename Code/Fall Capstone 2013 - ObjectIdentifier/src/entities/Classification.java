@@ -15,5 +15,14 @@ public class Classification {
 		this.name = name;
 	}
 	
-	
+	@Override
+	public boolean equals(Object obj){
+		if(obj == null)
+			return false;
+		if(!(obj instanceof Classification))
+			return false;
+		
+		Classification c = (Classification)obj;
+		return this.name == c.name;
+	}
 }

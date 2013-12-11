@@ -86,22 +86,25 @@ public class ShapeCostMapping {
 				costMatrix[row][col] = shapeContextCost.get(p).get(q);
 			}
 		}
+	
 	}
 	
 	private void applyHungarianAlgorithm(){
-		reduceRows();
-		reduceCols();
-		List<Line> coveredZeroLines = getMinLines(costMatrix);
+//		reduceRows();
+//		reduceCols();
+//		List<Line> coveredZeroLines = getMinLines(costMatrix);
 		Map<Point, LogPolarHistogram> unknownHistograms = unknownShape.getPointHistograms();
 		Map<Point, LogPolarHistogram> knownHistograms = knownShape.getPointHistograms();
-		
-		while(coveredZeroLines.size() != costMatrix.length){
-			double[][] covered = computeCoveredElements(coveredZeroLines);
-			addMinUncoveredToCovered(covered);
-			subtractMinElement();
-			coveredZeroLines = getMinLines(costMatrix);
-		}
-		int[][] result = findMatching();	
+//		
+//		while(coveredZeroLines.size() != costMatrix.length){
+//			double[][] covered = computeCoveredElements(coveredZeroLines);
+//			addMinUncoveredToCovered(covered);
+//			subtractMinElement();
+//			coveredZeroLines = getMinLines(costMatrix);
+//		}
+//		int[][] result = findMatching();	
+		HungarianAlgorithm h = new HungarianAlgorithm(costMatrix);
+		int[] result = h.execute();
 		minCostPointMapping = new ArrayList<PointToPointCostMapping>();
 		
 		Iterator<Point> pointIterator = unknownHistograms.keySet().iterator();
@@ -109,11 +112,11 @@ public class ShapeCostMapping {
 		for(int i = 0; i < result.length; i++){
 			Iterator<Point> otherPointIterator = knownHistograms.keySet().iterator();
 			Point p = pointIterator.next();
-			for(int j = 0; j < result[i].length; j++){
-				Point q = otherPointIterator.next();
-				if(result[i][j] == 1)
-					minCostPointMapping.add(new PointToPointCostMapping(p,q,shapeContextCost.get(p).get(q)));
+			Point q = otherPointIterator.next();
+			for(int j = 0; j < result[i]; j++){
+				q = otherPointIterator.next();
 			}
+			minCostPointMapping.add(new PointToPointCostMapping(p,q,shapeContextCost.get(p).get(q)));
 		}
 		
 	}

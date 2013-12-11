@@ -3,48 +3,117 @@ package Runnables;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Scanner;
 
 import javax.imageio.ImageIO;
 
+import knn.KNearestNeighbor;
+
+import edgeDetection.CannyEdgeDetector;
+import entities.Classification;
+
 import shapeContext.ObjectShape;
-import shapeContext.ShapeCostMapping;
 
 public class ShapeComparer {
-	public static void main(String[] args){
-		BufferedImage apple = null, apple_rotated = null, apple_scaled = null, apple_translated = null, otherApple = null, face  =null;
+	private String[] imgFiles;
+	private BufferedImage[] edges;
+	private ObjectShape[] trainingSet;
+	
+	public ShapeComparer(){
+		imgFiles = new String[]{"images/objects/trainingSet/apple.jpg","images/objects/trainingSet/car.jpg","images/objects/trainingSet/computer.jpg",
+				"images/objects/trainingSet/face.jpg","images/objects/trainingSet/apple2.jpg", "images/objects/trainingSet/apple3.jpg",
+				"images/objects/trainingSet/apple4.jpg", "images/objects/trainingSet/car2.jpg", "images/objects/trainingSet/car3.jpg", "images/objects/trainingSet/face2.jpg",
+				"images/objects/trainingSet/computer2.jpg"};
 		
-		try{
-			apple = ImageIO.read(new File("images/edges/apple.jpg"));
-			apple_rotated = ImageIO.read(new File("images/edges/apple_rotated.jpg"));
-			apple_scaled = ImageIO.read(new File("images/edges/apple_scaled.jpg"));
-			apple_translated = ImageIO.read(new File("images/edges/apple_translated.jpg"));
-			otherApple = ImageIO.read(new File("images/edges/otherApple.jpg"));
-			face = ImageIO.read(new File("images/edges/face.jpg"));
+		edges = new BufferedImage[imgFiles.length];
+		trainingSet = new ObjectShape[imgFiles.length];
+		
+		findEdges();
+		initializeObjectShapes();
+	}
+	
+	private void findEdges(){
+		CannyEdgeDetector canny = new CannyEdgeDetector();
+		for(int i = 0; i < imgFiles.length; i++){
+			try {
+				edges[i] = canny.processImage(ImageIO.read(new File(imgFiles[i])));
+				File file = new File("images/edges/" + imgFiles[i].split("trainingSet/")[1]);
+				ImageIO.write(edges[i],"jpg",file);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
-		catch(IOException e){}
+	}
+	
+	private void initializeObjectShapes(){
 		
-		ObjectShape appleShape = new ObjectShape(apple);
-		ObjectShape appleShape2 = new ObjectShape(apple);
-//		ObjectShape apple_rotatedShape = new ObjectShape(apple_rotated);
-//		ObjectShape apple_scaledShape = new ObjectShape(apple_scaled);
-//		ObjectShape apple_translatedShape = new ObjectShape(apple_translated);
-//		ObjectShape otherAppleShape = new ObjectShape(otherApple);
-//		ObjectShape faceShape = new ObjectShape(face);
+		ObjectShape apple = new ObjectShape(edges[0]);
+		apple.setClassification(new Classification("Apple"));
+		trainingSet[0] = apple;
 		
-		ShapeCostMapping appleToApple = new ShapeCostMapping(appleShape, appleShape2);
-//		ShapeCostMapping appleToApple_Rotated = new ShapeCostMapping(appleShape, apple_rotatedShape);
-//		ShapeCostMapping appleToApple_Scaled = new ShapeCostMapping(appleShape, apple_scaledShape);
-//		ShapeCostMapping appleToApple_Translated = new ShapeCostMapping(appleShape, apple_translatedShape);
-//		ShapeCostMapping appleToOtherApple = new ShapeCostMapping(appleShape, otherAppleShape);
-//		ShapeCostMapping appleToFace = new ShapeCostMapping(appleShape, faceShape);
+		ObjectShape car = new ObjectShape(edges[1]);
+		car.setClassification(new Classification("Car"));
+		trainingSet[1] = car;
 		
+		ObjectShape computer = new ObjectShape(edges[2]);
+		computer.setClassification(new Classification("Computer"));
+		trainingSet[2] = computer;
 		
-		System.out.println("Cost of matching shapes(smaller is better):");
-		System.out.println("Apple-Apple: "  + appleToApple.getTotalMatchingCost());
-//		System.out.println("Apple-Apple_Rotated: " + appleToApple_Rotated.getTotalMatchingCost());
-//		System.out.println("Apple-Apple_Scaled: " + appleToApple_Scaled.getTotalMatchingCost());
-//		System.out.println("Apple-Apple_Translated: " + appleToApple_Translated.getTotalMatchingCost());
-//		System.out.println("Apple-OtherApple: " + appleToOtherApple.getTotalMatchingCost());
-//		System.out.println("Apple-Face: " + appleToFace.getTotalMatchingCost());
+		ObjectShape face = new ObjectShape(edges[3]);
+		face.setClassification(new Classification("Face"));
+		trainingSet[3] = face;
+		
+		ObjectShape apple2 = new ObjectShape(edges[4]);
+		apple2.setClassification(new Classification("Apple"));
+		trainingSet[4] = apple2;
+		
+		ObjectShape apple3 = new ObjectShape(edges[5]);
+		apple3.setClassification(new Classification("Apple"));
+		trainingSet[5] = apple3;
+		
+		ObjectShape apple4 = new ObjectShape(edges[6]);
+		apple4.setClassification(new Classification("Apple"));
+		trainingSet[6] = apple4;
+		
+		ObjectShape car2 = new ObjectShape(edges[7]);
+		car2.setClassification(new Classification("Car"));
+		trainingSet[7] = car2;
+		
+		ObjectShape car3 = new ObjectShape(edges[8]);
+		car3.setClassification(new Classification("Car"));
+		trainingSet[8] = car3;
+		
+		ObjectShape face2 = new ObjectShape(edges[9]);
+		face2.setClassification(new Classification("Face"));
+		trainingSet[9] = face2;
+		
+		ObjectShape computer2 = new ObjectShape(edges[10]);
+		computer2.setClassification(new Classification("Computer"));
+		trainingSet[10] = computer2;
+	
+	}
+	
+	public static void main(String[] args){
+		
+		ShapeComparer sc = new ShapeComparer();
+		KNearestNeighbor KNN = new KNearestNeighbor(sc.trainingSet);
+		
+		CannyEdgeDetector canny = new CannyEdgeDetector();
+		Scanner scan = new Scanner(System.in);
+		String input = null;
+		do{
+			System.out.println("Enter file name:");
+			 input = scan.nextLine();
+			 if(input != "q"){
+				 try {
+					 	String fileName = "images/objects/testData/"+input+".jpg";
+						Classification c = KNN.classify(new ObjectShape(canny.processImage(ImageIO.read(new File(fileName)))));
+						System.out.println("Classification: " + c.getName());
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+			 }
+		}while(input != "q");
+		scan.close();
 	}
 }
